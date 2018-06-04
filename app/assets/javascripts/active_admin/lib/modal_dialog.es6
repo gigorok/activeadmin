@@ -14,9 +14,10 @@ ActiveAdmin.modal_dialog = function(message, inputs, callback){
     }
 
     let klass = type === 'datepicker' ? type : '';
+    let inputId = name.replace(RegExp(' ', 'g'), '-').toLowerCase();
     html += `<li>
-      <label>${name.charAt(0).toUpperCase() + name.slice(1)}</label>
-      <${wrapper} name="${name}" class="${klass}" type="${type}">` +
+      <label for="${inputId}">${name.charAt(0).toUpperCase() + name.slice(1)}</label>
+      <${wrapper} id="${inputId} "name="${name}" class="${klass}" type="${type}">` +
         (opts ? ((() => {
           const result = [];
 
