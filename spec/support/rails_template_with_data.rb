@@ -1,4 +1,4 @@
-apply File.expand_path("../rails_template.rb", __FILE__)
+apply File.expand_path('rails_template.rb', __dir__)
 
 inject_into_file 'config/initializers/active_admin.rb', <<-RUBY, after: "ActiveAdmin.setup do |config|\n"
 
@@ -293,7 +293,8 @@ append_file "db/seeds.rb", "\n\n" + <<-RUBY.strip_heredoc
     User.create!  first_name: first,
                   last_name: last,
                   username: [first,last].join('-').downcase,
-                  age: rand(80)
+                  age: rand(80),
+                  encrypted_password: SecureRandom.hex
   end
 
   categories = ["Rock", "Pop Rock", "Alt-Country", "Blues", "Dub-Step"].collect do |name|
