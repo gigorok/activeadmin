@@ -5,15 +5,17 @@ like you that make Active Admin such a great tool.
 
 ### Where do I go from here?
 
-If you've noticed a bug or have a question that doesn't belong on the
-[mailing list][] or [Stack Overflow][], [search the issue tracker][] to see if
-someone else in the community has already created a ticket. If not, go ahead and
-[make one][new issue]!
+If you've noticed a bug or have a feature request, [make one][new issue]! It's
+generally best if you get confirmation of your bug or approval for your feature
+request this way before starting to code.
+
+If you have a general question about activeadmin, you can post it on [Stack
+Overflow], the issue tracker is only for bugs and feature requests.
 
 ### Fork & create a branch
 
-If this is something you think you can fix, then [fork Active Admin][] and
-create a branch with a descriptive name.
+If this is something you think you can fix, then [fork Active Admin] and create
+a branch with a descriptive name.
 
 A good branch name would be (where issue #325 is the ticket you're working on):
 
@@ -26,13 +28,26 @@ git checkout -b 325-add-japanese-translations
 Make sure you're using a recent ruby and have the `bundler` gem installed, at
 least version `1.14.3`.
 
-You'll also need chrome and [chromedriver] installed in order to run cucumber
-scenarios.
+You'll also need chrome installed in order to run cucumber scenarios.
 
 Now install the development dependencies:
 
 ```sh
 bundle install
+```
+
+Then install javascript dependencies with [Yarn] (requires a current version of [Node.js]):
+
+```sh
+bin/yarn install
+```
+
+JS assets are located in `app/javascript/active_admin`. The config will take care of compiling a complete bundle with [Rollup] using the `build` script and exported to `app/assets/javascripts/active_admin/base.js` ready to be used by Sprockets.
+
+To update javascript bundle run (add `-w` flag for watch mode):
+
+```sh
+bin/yarn build
 ```
 
 Now you should be able to run the entire suite using:
@@ -41,49 +56,25 @@ Now you should be able to run the entire suite using:
 bin/rake
 ```
 
-The test run will generate a sample Rails application in `tmp/rails` to run the
+The test run will generate a sample Rails application in `tmp/test_apps` to run the
 tests against.
-
-If your tests are passing locally but they're failing on CircleCI, it's probably
-because of some breaking change or problem with the latest version of some
-dependency. You should be able to reproduce the issue locally by:
-
-* Removing the `Gemfile.lock` file.
-* Running `bundle install`.
-* Re-running the tests again like you did previously.
-
-This is not your fault though, so if this happens feel free to investigate, but
-also feel free to ping maintainers about the issue you just found.
 
 If you want to test against a Rails version different from the latest, make sure
 you use the correct Gemfile, for example:
 
 ```sh
-export BUNDLE_GEMFILE=gemfiles/rails_51.gemfile
+export BUNDLE_GEMFILE=gemfiles/rails_60/Gemfile
 ```
 
-### Did you find a bug?
+**Warning** SCSS assets are aimed to be used indifferently with Sprockets **and** webpacker.
+As such, make sure not to use any sass-rails directives such as `asset-url` or `image-url`.
 
-* **Ensure the bug was not already reported** by [searching all issues][].
-
-* If you're unable to find an open issue addressing the problem,
-  [open a new one][new issue]. Be sure to include a **title and clear
-  description**, as much relevant information as possible, and a **code sample**
-  or an **executable test case** demonstrating the expected behavior that is not
-  occurring.
-
-* If possible, use the relevant bug report templates to create the issue.
-  Simply copy the content of the appropriate template into a .rb file, make the
-  necessary changes to demonstrate the issue, and **paste the content into the
-  issue description**:
-  * [**ActiveAdmin** master issues][master template]
-
-### 5. Implement your fix or feature
+### Implement your fix or feature
 
 At this point, you're ready to make your changes! Feel free to ask for help;
 everyone is a beginner at first :smile_cat:
 
-### 6. View your changes in a Rails application
+### View your changes in a Rails application
 
 Active Admin is meant to be used by humans, not cucumbers. So make sure to take
 a look at your changes in a browser.
@@ -95,7 +86,7 @@ bin/rake local server
 ```
 
 This will automatically create a Rails app if none already exists, and store it
-in the `.test-rails-apps` folder.
+in the `tmp/development_apps` folder.
 
 You should now be able to open <http://localhost:3000/admin> in your browser.
 You can log in using:
@@ -145,12 +136,12 @@ git push --set-upstream origin 325-add-japanese-translations
 
 Finally, go to GitHub and [make a Pull Request][] :D
 
-CircleCI will run our test suite against all supported Rails versions. We care
-about quality, so your PR won't be merged until all tests pass. It's unlikely,
-but it's possible that your changes pass tests in one Rails version but fail in
-another. In that case, you'll have to setup your development environment (as
-explained in step 3) to use the problematic Rails version, and investigate
-what's going on!
+Github Actions will run our test suite against all supported Rails versions. We
+care about quality, so your PR won't be merged until all tests pass. It's
+unlikely, but it's possible that your changes pass tests in one Rails version
+but fail in another. In that case, you'll have to setup your development
+environment (as explained in step 3) to use the problematic Rails version, and
+investigate what's going on!
 
 ### Keeping your Pull Request updated
 
@@ -183,35 +174,22 @@ met.
 
 Maintainers need to do the following to push out a release:
 
-* Make sure all pull requests are in and that changelog is current
-* Update `version.rb` file and changelog with new version number
-* If it's not a patch level release, create a stable branch for that release,
-  otherwise switch to the stable branch corresponding to the patch release you
-  want to ship:
-
-  ```sh
-  git checkout master
-  git fetch activeadmin
-  git rebase activeadmin/master
-  # If the release is 2.1.x then this should be: 2-1-stable
-  git checkout -b N-N-stable
-  git push activeadmin N-N-stable:N-N-stable
-  ```
-
+* Switch to the master branch and make sure it's up to date.
 * Make sure you have [chandler] properly configured. Chandler is used to
   automatically submit github release notes from the changelog right after
   pushing the gem to rubygems.
-* `bin/rake release`
+* Run one of `bin/rake release:prepare_{prerelease,prepatch,patch,preminor,minor,premajor,major}`, push the result and create a PR.
+* Review and merge the PR. The generated changelog in the PR should include all user visible changes you intend to ship.
+* Run `bin/rake release` from the target branch once the PR is merged.
 
 [chandler]: https://github.com/mattbrictson/chandler#2-configure-credentials
-[chromedriver]: https://sites.google.com/a/chromium.org/chromedriver/getting-started
-[mailing list]: http://groups.google.com/group/activeadmin
 [Stack Overflow]: http://stackoverflow.com/questions/tagged/activeadmin
-[search the issue tracker]: https://github.com/activeadmin/activeadmin/issues?q=something
 [new issue]: https://github.com/activeadmin/activeadmin/issues/new
 [fork Active Admin]: https://help.github.com/articles/fork-a-repo
-[searching all issues]: https://github.com/activeadmin/activeadmin/issues?q=
-[master template]: https://github.com/activeadmin/activeadmin/blob/master/tasks/bug_report_template.rb
 [make a pull request]: https://help.github.com/articles/creating-a-pull-request
 [git rebasing]: http://git-scm.com/book/en/Git-Branching-Rebasing
-[interactive rebase]: https://help.github.com/articles/interactive-rebase
+[interactive rebase]: https://help.github.com/en/github/using-git/about-git-rebase
+[shortcut reference links]: https://github.github.com/gfm/#shortcut-reference-link
+[Rollup]: https://rollupjs.org/guide/en/#quick-start
+[Yarn]: https://yarnpkg.com/en/docs/install
+[Node.js]: https://nodejs.org/en/

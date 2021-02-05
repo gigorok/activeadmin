@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 class DefaultPolicy < ApplicationPolicy
   def respond_to_missing?(method, include_private = false)
@@ -90,7 +90,7 @@ RSpec.describe ActiveAdmin::PunditAdapter do
       auth.authorized?(:index)
     end
 
-    context 'when Pundit is unable to find policy scope' do
+    context "when Pundit is unable to find policy scope" do
       let(:collection) { double("collection", to_sym: :collection) }
       subject(:scope) { auth.scope_collection(collection, :read) }
 
@@ -129,6 +129,18 @@ RSpec.describe ActiveAdmin::PunditAdapter do
           expect { subject }.to raise_error Pundit::NotDefinedError
         end
       end
+    end
+
+    context "when retrieve_policy is given a page and namespace is :active_admin" do
+      let(:page) { namespace.register_page "Dashboard" }
+
+      subject(:policy) { auth.retrieve_policy(page) }
+
+      before do
+        allow(ActiveAdmin.application).to receive(:pundit_policy_namespace).and_return :active_admin
+      end
+
+      it("should return page policy instance") { is_expected.to be_instance_of(ActiveAdmin::PagePolicy) }
     end
   end
 end

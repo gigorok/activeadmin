@@ -6,7 +6,9 @@ module ActiveAdmin
     attr_reader :user, :action, :subject
 
     def initialize(user, action, subject = nil)
-      @user, @action, @subject = user, action, subject
+      @user = user
+      @action = action
+      @subject = subject
 
       super()
     end
@@ -42,8 +44,6 @@ module ActiveAdmin
     rescue *database_error_classes => exception
       raise new exception
     end
-
-    private
 
     def self.database_error_classes
       @classes ||= []

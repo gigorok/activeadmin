@@ -5,11 +5,11 @@ module ActiveAdmin
       builder_method :status_tag
 
       def tag_name
-        'span'
+        "span"
       end
 
       def default_class_name
-        'status_tag'
+        "status_tag"
       end
 
       # @overload status_tag(status, options = {})
@@ -49,10 +49,12 @@ module ActiveAdmin
 
       def convert_to_boolean_status(status)
         case status
-        when true, 'true'
-          'Yes'
-        when false, 'false', nil
-          'No'
+        when true, "true"
+          "Yes"
+        when false, "false"
+          "No"
+        when nil
+          "Unset"
         else
           status
         end
@@ -60,10 +62,12 @@ module ActiveAdmin
 
       def status_to_class(status)
         case status
+        when "Unset"
+          "unset no"
         when String, Symbol
-          status.to_s.titleize.gsub(/\s/, '').underscore
+          status.to_s.titleize.gsub(/\s/, "").underscore
         else
-          ''
+          ""
         end
       end
     end

@@ -42,8 +42,6 @@ module ActiveAdmin
         config[:route_collection_name] == config[:route_instance_name]
       end
 
-      private
-
       class RouteBuilder
         def initialize(resource)
           @resource = resource
@@ -98,19 +96,19 @@ module ActiveAdmin
           suffix = options[:suffix] || "path"
           route = []
 
-          route << options[:action]           # "batch_action", "edit" or "new"
-          route << resource.route_prefix      # "admin"
+          route << options[:action] # "batch_action", "edit" or "new"
+          route << resource.route_prefix # "admin"
           route << belongs_to_name if nested? # "category"
-          route << resource_path_name         # "posts" or "post"
-          route << suffix                     # "path" or "index path"
+          route << resource_path_name # "posts" or "post"
+          route << suffix # "path" or "index path"
 
-          route.compact.join('_').to_sym      # :admin_category_posts_path
+          route.compact.join("_").to_sym # :admin_category_posts_path
         end
 
         # @return params to pass to instance path
         def route_instance_params(instance)
           if nested?
-            [instance.public_send(belongs_to_name).to_param, instance.to_param]
+            [instance.public_send(belongs_to_target_name).to_param, instance.to_param]
           else
             instance.to_param
           end
@@ -123,11 +121,19 @@ module ActiveAdmin
         end
 
         def nested?
-          resource.belongs_to? && resource.belongs_to_config.required?
+          resource.belongs_to? && belongs_to_config.required?
+        end
+
+        def belongs_to_target_name
+          belongs_to_config.target_name
         end
 
         def belongs_to_name
-          resource.belongs_to_config.target.resource_name.singular if nested?
+          belongs_to_config.target.resource_name.singular
+        end
+
+        def belongs_to_config
+          resource.belongs_to_config
         end
 
         def routes

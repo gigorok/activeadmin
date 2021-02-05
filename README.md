@@ -4,7 +4,7 @@
 creating elegant backends for website administration.
 
 [![Version         ][rubygems_badge]][rubygems]
-[![Circle CI       ][circle_badge]][circle]
+[![Github Actions  ][actions_badge]][actions]
 [![Coverage        ][coverage_badge]][coverage]
 [![Tidelift        ][tidelift_badge]][tidelift]
 [![Inch CI         ][inch_badge]][inch]
@@ -20,6 +20,11 @@ creating elegant backends for website administration.
 * Check out [the docs][docs].
 * Try the [live demo][demo].
 * The [wiki] includes links to tutorials, articles and sample projects.
+
+## For enterprise
+
+Active Admin for enterprise is available via the Tidelift subscription. [Learn
+More][tidelift_enterprise].
 
 ## Need help?
 
@@ -39,7 +44,7 @@ to ask.
 ## Want to support us?
 
 If you want to support us financially, you can [help fund the project
-through a Tidelift subscription][tidelift]. By buying a Tidelift subscription
+through a Tidelift subscription][tidelift_support]. By buying a Tidelift subscription
 you make sure your whole dependency stack is properly maintained, while also
 getting a comprehensive view of outdated dependencies, new releases, security
 alerts, and licensing compatibility issues.
@@ -88,14 +93,16 @@ Thanks to [Open Collective][opencollective contributors] and all our Open Collec
 
 [rubygems_badge]: http://img.shields.io/gem/v/activeadmin.svg
 [rubygems]: https://rubygems.org/gems/activeadmin
-[circle_badge]: https://circleci.com/gh/activeadmin/activeadmin/tree/master.svg
-[circle]: https://circleci.com/gh/activeadmin/activeadmin/tree/master
+[actions_badge]: https://github.com/activeadmin/activeadmin/workflows/ci/badge.svg
+[actions]: https://github.com/activeadmin/activeadmin/actions
 [coverage_badge]: https://api.codeclimate.com/v1/badges/779e407d22bacff19733/test_coverage
 [coverage]: https://codeclimate.com/github/activeadmin/activeadmin/test_coverage
 [inch_badge]: http://inch-ci.org/github/activeadmin/activeadmin.svg?branch=master
 [inch]: http://inch-ci.org/github/activeadmin/activeadmin
 [tidelift_badge]: https://tidelift.com/badges/github/activeadmin/activeadmin
 [tidelift]: https://tidelift.com/subscription/pkg/rubygems-activeadmin?utm_source=rubygems-activeadmin&utm_medium=readme
+[tidelift_enterprise]: https://tidelift.com/subscription/pkg/rubygems-activeadmin?utm_source=rubygems-activeadmin&utm_medium=referral&utm_campaign=enterprise
+[tidelift_support]: https://tidelift.com/subscription/pkg/rubygems-activeadmin?utm_source=rubygems-activeadmin&utm_medium=referral&utm_campaign=github&utm_content=support
 
 [docs]: http://activeadmin.info/0-installation.html
 [demo]: http://demo.activeadmin.info/admin

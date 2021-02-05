@@ -1,10 +1,46 @@
-require 'uri'
+require "uri"
 require File.expand_path(File.join(__dir__, "..", "support", "paths"))
-require File.expand_path(File.join(__dir__, "..", "support", "selectors"))
 
 module WithinHelpers
   def with_scope(locator)
     locator ? within(*selector_for(locator)) { yield } : yield
+  end
+
+  private
+
+  def selector_for(locator)
+    case locator
+
+    # Add more mappings here.
+    # Here is an example that pulls values out of the Regexp:
+    #
+    #  when /^the (notice|error|info) flash$/
+    #    ".flash.#{$1}"
+
+    # You can also return an array to use a different selector
+    # type, like:
+    #
+    #  when /the header/
+    #    [:xpath, "//header"]
+
+    when "index grid"
+      [:css, "table.index_grid"]
+
+    when /^the "([^"]*)" sidebar$/
+      [:css, "##{$1.tr(" ", '').underscore}_sidebar_section"]
+
+    # This allows you to provide a quoted selector as the scope
+    # for "within" steps as was previously the default for the
+    # web steps:
+    when /^"(.+)"$/
+      $1
+
+    else
+      # :nocov:
+      raise "Can't find mapping from \"#{locator}\" to a selector.\n" +
+        "Now, go and add a mapping in #{__FILE__}"
+      # :nocov:
+    end
   end
 end
 World(WithinHelpers)
@@ -42,13 +78,13 @@ When /^I (check|uncheck) "([^"]*)"$/ do |action, field|
 end
 
 Then /^I should( not)? see( the element)? "([^"]*)"$/ do |negate, is_css, text|
-  should = negate ? :not_to        : :to
-  have   = is_css ? have_css(text) : have_content(text)
+  should = negate ? :not_to : :to
+  have = is_css ? have_css(text) : have_content(text)
   expect(page).send should, have
 end
 
 Then /^I should see the select "([^"]*)" with options "([^"]+)"?$/ do |label, with_options|
-  expect(page).to have_select(label, with_options: with_options.split(', '))
+  expect(page).to have_select(label, with_options: with_options.split(", "))
 end
 
 Then /^I should see the field "([^"]*)" of type "([^"]+)"?$/ do |label, of_type|
@@ -58,7 +94,7 @@ end
 Then /^the "([^"]*)" field(?: within (.*))? should contain "([^"]*)"$/ do |field, parent, value|
   with_scope(parent) do
     field = find_field(field)
-    value = field.tag_name == 'textarea' ? field.text : field.value
+    value = field.tag_name == "textarea" ? field.text : field.value
 
     expect(value).to match(/#{value}/)
   end

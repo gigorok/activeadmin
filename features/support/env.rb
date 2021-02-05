@@ -1,19 +1,21 @@
-ENV['RAILS_ENV'] = 'test'
+ENV["RAILS_ENV"] = "test"
 
-require 'simplecov' if ENV["COVERAGE"] == "true"
+require "simplecov" if ENV["COVERAGE"] == "true"
 
 Dir["#{File.expand_path('../step_definitions', __dir__)}/*.rb"].each do |f|
   require f
 end
 
-require_relative "../../tmp/rails/rails-#{Gem.loaded_specs["rails"].version}/config/environment"
+require_relative "../../tasks/test_application"
 
-require_relative 'rails'
+require "#{ActiveAdmin::TestApplication.new.full_app_dir}/config/environment.rb"
 
-require 'rspec/mocks'
+require_relative "rails"
+
+require "rspec/mocks"
 World(RSpec::Mocks::ExampleMethods)
 
-Around '@mocks' do |scenario, block|
+Around "@mocks" do |scenario, block|
   RSpec::Mocks.setup
 
   block.call
@@ -25,45 +27,23 @@ Around '@mocks' do |scenario, block|
   end
 end
 
-After '@debug' do |scenario|
+After "@debug" do |scenario|
   # :nocov:
   save_and_open_page if scenario.failed?
   # :nocov:
 end
 
-require 'capybara/dsl'
+require "capybara/cuprite"
 
-World(Capybara::DSL)
-
-After do
-  Capybara.reset_sessions!
+Capybara.register_driver(:cuprite) do |app|
+  Capybara::Cuprite::Driver.new(app, process_timeout: 30, timeout: 30)
 end
 
-Before do
-  Capybara.use_default_driver
-end
-
-Before '@javascript' do
-  Capybara.current_driver = Capybara.javascript_driver
-end
-
-Capybara.register_driver :chrome do |app|
-  Capybara::Selenium::Driver.load_selenium
-
-  options = Selenium::WebDriver::Chrome::Options.new
-  options.args << '--headless'
-
-  http_client = Selenium::WebDriver::Remote::Http::Default.new
-  http_client.read_timeout = 180
-
-  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options, http_client: http_client)
-end
-
-Capybara.javascript_driver = :chrome
+Capybara.javascript_driver = :cuprite
 
 Capybara.server = :webrick
 
-Capybara.asset_host = 'http://localhost:3000'
+Capybara.asset_host = "http://localhost:3000"
 
 # Capybara defaults to XPath selectors rather than Webrat's default of CSS3. In
 # order to ease the transition to Capybara we set the default here. If you'd
@@ -86,7 +66,7 @@ end
 Before do
   # We are caching classes, but need to manually clear references to
   # the controllers. If they aren't clear, the router stores references
-  ActiveSupport::Dependencies.clear
+  ActiveSupport::Dependencies.clear unless ActiveAdmin::Dependency.supports_zeitwerk?
 
   # Reload Active Admin
   ActiveAdmin.unload!
@@ -96,13 +76,13 @@ end
 # Force deprecations to raise an exception.
 ActiveSupport::Deprecation.behavior = :raise
 
-After '@authorization' do |scenario, block|
+After "@authorization" do |scenario, block|
   # Reset back to the default auth adapter
   ActiveAdmin.application.namespace(:admin).
     authorization_adapter = ActiveAdmin::AuthorizationAdapter
 end
 
-Around '@silent_unpermitted_params_failure' do |scenario, block|
+Around "@silent_unpermitted_params_failure" do |scenario, block|
   original = ActionController::Parameters.action_on_unpermitted_parameters
 
   begin
@@ -113,6 +93,6 @@ Around '@silent_unpermitted_params_failure' do |scenario, block|
   end
 end
 
-Around '@locale_manipulation' do |scenario, block|
+Around "@locale_manipulation" do |scenario, block|
   I18n.with_locale(:en, &block)
 end

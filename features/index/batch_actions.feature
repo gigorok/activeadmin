@@ -9,7 +9,7 @@ Feature: Batch Actions
       """
     Then I should see the batch action button
     And I should see that the batch action button is disabled
-    And I should see the batch action popover exists
+    And I should see the batch action popover
     And I should see 10 posts in the table
 
     When I check the 1st record
@@ -17,8 +17,8 @@ Feature: Batch Actions
     And I follow "Batch Actions"
     Then I should see the batch action :destroy "Delete Selected"
 
-    Given I click "Delete Selected" and accept confirmation
-    Then I should see a flash with "Successfully destroyed 2 posts"
+    When I click "Delete Selected" and accept confirmation
+    Then I should see a flash with "Successfully deleted 2 posts"
     And I should see 8 posts in the table
 
   Scenario: Use default (destroy) batch action when default_url_options present
@@ -40,7 +40,7 @@ Feature: Batch Actions
     Then I should see the batch action :destroy "Delete Selected"
 
     Given I submit the batch action form with "destroy"
-    Then I should see a flash with "Successfully destroyed 1 post"
+    Then I should see a flash with "Successfully deleted 1 post"
     And I should see 2 posts in the table
 
   Scenario: Use default (destroy) batch action on a decorated resource
@@ -57,7 +57,24 @@ Feature: Batch Actions
     Then I should see the batch action :destroy "Delete Selected"
 
     Given I submit the batch action form with "destroy"
-    Then I should see a flash with "Successfully destroyed 2 posts"
+    Then I should see a flash with "Successfully deleted 2 posts"
+    And I should see 3 posts in the table
+
+  Scenario: Use default (destroy) batch action on a PORO decorated resource
+    Given 5 posts exist
+    And an index configuration of:
+    """
+      ActiveAdmin.register Post do
+        decorate_with PostPoroDecorator
+      end
+    """
+    When I check the 2nd record
+    And I check the 4th record
+    And I follow "Batch Actions"
+    Then I should see the batch action :destroy "Delete Selected"
+
+    Given I submit the batch action form with "destroy"
+    Then I should see a flash with "Successfully deleted 2 posts"
     And I should see 3 posts in the table
 
   @javascript
@@ -74,7 +91,7 @@ Feature: Batch Actions
     When I go to the last author's posts
     Then I should see the batch action button
     And I should see that the batch action button is disabled
-    And I should see the batch action popover exists
+    And I should see the batch action popover
     And I should see 5 posts in the table
 
     When I check the 2nd record
@@ -82,8 +99,8 @@ Feature: Batch Actions
     And I follow "Batch Actions"
     Then I should see the batch action :destroy "Delete Selected"
 
-    Given I click "Delete Selected" and accept confirmation
-    Then I should see a flash with "Successfully destroyed 2 posts"
+    When I click "Delete Selected" and accept confirmation
+    Then I should see a flash with "Successfully deleted 2 posts"
     And I should see 3 posts in the table
 
   Scenario: Disable display of batch action button if all nested buttons hide

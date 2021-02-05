@@ -41,8 +41,14 @@ module NavigationHelpers
     when /^the last post's show page$/
       admin_post_path(Post.last)
 
+    when /^the post's show page$/
+      admin_post_path(Post.last)
+
     when /^the last post's edit page$/
       edit_admin_post_path(Post.last)
+
+    when /^the last author's show page$/
+      admin_user_path(User.last)
 
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
@@ -54,7 +60,7 @@ module NavigationHelpers
       begin
         page_name =~ /the (.*) page/
         path_components = $1.split(/\s+/)
-        self.send path_components.push('path').join('_')
+        self.send path_components.push("path").join("_")
         # :nocov:
       rescue Object => e
         raise "Can't find mapping from \"#{page_name}\" to a path.\n" +

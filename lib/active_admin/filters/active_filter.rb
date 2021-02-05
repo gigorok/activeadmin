@@ -26,8 +26,7 @@ module ActiveAdmin
       end
 
       def label
-        # TODO: to remind us to go back to the simpler str.downcase once we support ruby >= 2.4 only.
-        translated_predicate = predicate_name.mb_chars.downcase.to_s
+        translated_predicate = predicate_name.downcase
         if filter_label && filter_label.is_a?(Proc)
           "#{filter_label.call} #{translated_predicate}"
         elsif filter_label
@@ -40,8 +39,9 @@ module ActiveAdmin
       end
 
       def predicate_name
-        I18n.t("active_admin.filters.predicates.#{condition.predicate.name}",
-               default: ransack_predicate_name)
+        I18n.t(
+          "active_admin.filters.predicates.#{condition.predicate.name}",
+          default: ransack_predicate_name)
       end
 
       def html_options
@@ -67,7 +67,7 @@ module ActiveAdmin
       def filter_label
         return unless filter
 
-        filter[:label]
+        filter[:label] || I18n.t(name, scope: ["formtastic", "labels"], default: nil)
       end
 
       #@return Ransack::Nodes::Attribute
@@ -84,7 +84,7 @@ module ActiveAdmin
       end
 
       def find_class?
-        ['eq', 'in'].include? condition.predicate.arel_predicate
+        ["eq", "in"].include? condition.predicate.arel_predicate
       end
 
       # detect related class for Ransack::Nodes::Attribute
@@ -97,7 +97,7 @@ module ActiveAdmin
       end
 
       def filter
-        resource.filters[name.to_sym]
+        resource.filters[name.to_sym] || resource.filters[condition.key.to_sym]
       end
 
       def related_primary_key
@@ -112,8 +112,6 @@ module ActiveAdmin
         @predicate_association = find_predicate_association unless defined?(@predicate_association)
         @predicate_association
       end
-
-      private
 
       def find_predicate_association
         condition_attribute.klass.reflect_on_all_associations.
